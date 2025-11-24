@@ -1,5 +1,6 @@
 ﻿using IssueManagementSystem.Application.DTOs;
 using IssueManagementSystem.Application.Services;
+using IssueManagementSystem.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -50,18 +51,26 @@ public class PostController : ControllerBase
 
     [HttpGet("approved")]
     [Authorize]
-    public async Task<IActionResult> GetAllApproved()
+    public async Task<IActionResult> GetAllApproved([FromQuery] PostType? postType)
     {
-        var posts = await _postService.GetAllApprovedPostsAsync();
+        var posts = await _postService.GetAllApprovedPostsAsync(postType);
         return Ok(posts);
+    }
+
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var post = await _postService.GetPostByIdAsync(id);
+        return Ok(post);
     }
 
     [HttpGet("user")]
     [Authorize]
-    public async Task<IActionResult> GetUserPosts()
+    public async Task<IActionResult> GetUserPosts([FromQuery] PostType? postType, [FromQuery] PostStatus? postStatus)
     {
         int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var posts = await _postService.GetAllUserPostsAsync(userId);
+        var posts = await _postService.GetAllUserPostsAsync(userId,postType,postStatus);
         return Ok(posts);
     }
 }

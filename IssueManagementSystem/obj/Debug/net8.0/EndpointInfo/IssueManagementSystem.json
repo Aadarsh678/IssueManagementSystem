@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Admin/promote": {
+    "/api/Admin/user/promote": {
       "post": {
         "tags": [
           "Admin"
@@ -36,7 +36,7 @@
         }
       }
     },
-    "/api/Admin/approve": {
+    "/api/Admin/post/approve": {
       "post": {
         "tags": [
           "Admin"
@@ -67,7 +67,7 @@
         }
       }
     },
-    "/api/Admin/reject": {
+    "/api/Admin/post/reject": {
       "post": {
         "tags": [
           "Admin"
@@ -98,11 +98,20 @@
         }
       }
     },
-    "/api/Admin/submitted/all": {
+    "/api/Admin/post/submitted/all": {
       "get": {
         "tags": [
           "Admin"
         ],
+        "parameters": [
+          {
+            "name": "postType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PostType"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -110,7 +119,7 @@
         }
       }
     },
-    "/api/Admin/submitted/user/{userId}": {
+    "/api/Admin/post/submitted/user/{userId}": {
       "get": {
         "tags": [
           "Admin"
@@ -123,6 +132,13 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "postType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PostType"
             }
           }
         ],
@@ -386,12 +402,42 @@
             "description": "OK"
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/Post/approved": {
       "get": {
         "tags": [
           "Post"
+        ],
+        "parameters": [
+          {
+            "name": "postType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PostType"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -404,6 +450,22 @@
       "get": {
         "tags": [
           "Post"
+        ],
+        "parameters": [
+          {
+            "name": "postType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PostType"
+            }
+          },
+          {
+            "name": "postStatus",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PostStatus"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -442,6 +504,9 @@
       "CreatePostRequest": {
         "type": "object",
         "properties": {
+          "postType": {
+            "$ref": "#/components/schemas/PostType"
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -466,6 +531,25 @@
           }
         },
         "additionalProperties": false
+      },
+      "PostStatus": {
+        "enum": [
+          "DRAFT",
+          "PENDING_APPROVAL",
+          "APPROVED",
+          "REJECTED",
+          "CLOSED"
+        ],
+        "type": "string"
+      },
+      "PostType": {
+        "enum": [
+          "ISSUE",
+          "COMPLAINT",
+          "POST",
+          "ANNOUNCEMENT"
+        ],
+        "type": "string"
       },
       "Promote": {
         "type": "object",

@@ -1,5 +1,6 @@
 ﻿using IssueManagementSystem.Application.DTOs;
 using IssueManagementSystem.Application.Services;
+using IssueManagementSystem.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -47,9 +48,9 @@ namespace IssueManagementSystem.API.Controllers
         // Admin/SuperAdmin sees all submitted posts
         [HttpGet("post/submitted/all")]
         [Authorize(Roles = "ADMIN,SUPERADMIN")]
-        public async Task<IActionResult> GetAllSubmittedPosts()
+        public async Task<IActionResult> GetAllSubmittedPosts([FromQuery] PostType? postType)
         {
-            var posts = await _postService.GetAllSubmittedPostsAsync();
+            var posts = await _postService.GetAllSubmittedPostsAsync(postType);
             return Ok(posts);
         }
 
@@ -57,9 +58,9 @@ namespace IssueManagementSystem.API.Controllers
         // Admin/SuperAdmin sees submitted posts of a specific user
         [HttpGet("post/submitted/user/{userId}")]
         [Authorize(Roles = "ADMIN,SUPERADMIN")]
-        public async Task<IActionResult> GetSubmittedPostsByUser(int userId)
+        public async Task<IActionResult> GetSubmittedPostsByUser(int userId, [FromQuery] PostType? postType)
         {
-            var posts = await _postService.GetSubmittedPostsByUserAsync(userId);
+            var posts = await _postService.GetSubmittedPostsByUserAsync(userId,postType);
             return Ok(posts);
         }
     }

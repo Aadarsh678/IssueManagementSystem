@@ -1,8 +1,10 @@
 ﻿using IssueManagementSystem.Domain.Entities;
 using IssueManagementSystem.Domain.Enums;
 using IssueManagementSystem.Domain.Interface;
-using static IssueManagementSystem.Application.DTOs.PostDtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using static IssueManagementSystem.Application.DTOs.PostDtos;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace IssueManagementSystem.Application.Services
 {
@@ -23,6 +25,7 @@ namespace IssueManagementSystem.Application.Services
                 Title = request.Title,
                 Description = request.Description,
                 CreatedBy = creatorId,
+                PostType = request.PostType,
                 Status = PostStatus.DRAFT,
                 CreatedAt = DateTime.UtcNow
             };
@@ -160,56 +163,118 @@ namespace IssueManagementSystem.Application.Services
             await _unitOfWork.SaveAsync();
         }
 
-        // Get all approved posts (for all users)
-        public async Task<IEnumerable<PostResponse>> GetAllApprovedPostsAsync()
+        //get post by id
+        public async Task<PostResponse> GetPostByIdAsync(int postId)
         {
-            var posts = await _unitOfWork.PostRepository.GetAll()
-                .Where(p => p.Status == PostStatus.APPROVED)
+            // Get post with related entities
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(postId);
+
+            if (post == null)
+                throw new Exception("Post not found");
+
+            // Map to DTO using your helper
+            return MapToResponse(post);
+        }
+
+
+        // Get all approved posts (for all users)
+        public async Task<IEnumerable<PostResponse>> GetAllApprovedPostsAsync(PostType? typeFilter)
+        {
+            var query = _unitOfWork.PostRepository
+                .GetAll()
                 .Include(p => p.Creator)
                 .Include(p => p.Assignee)
-                .ToListAsync();
+                .Where(p => p.Status == PostStatus.APPROVED)
+                .AsQueryable();
 
+            if (typeFilter.HasValue)
+            {
+                query = query.Where(p => p.PostType == typeFilter.Value);
+            }
+
+            var posts = await query.ToListAsync();
             return posts.Select(MapToResponse);
         }
+
+
 
         // Get all posts for a specific user (all statuses)
-        public async Task<IEnumerable<PostResponse>> GetAllUserPostsAsync(int userId)
+        public async Task<IEnumerable<PostResponse>> GetAllUserPostsAsync(
+        int userId,
+        PostType? typeFilter,
+        PostStatus? statusFilter)
+            {
+                var query = _unitOfWork.PostRepository
+                    .GetAll()
+                    .Include(p => p.Creator)
+                    .Include(p => p.Assignee)
+                    .Where(p => p.CreatedBy == userId)
+                    .AsQueryable();
+
+                if (typeFilter.HasValue)
+                    query = query.Where(p => p.PostType == typeFilter.Value);
+
+                if (statusFilter.HasValue)
+                    query = query.Where(p => p.Status == statusFilter.Value);
+
+                var posts = await query.ToListAsync();
+                return posts.Select(MapToResponse);
+            }
+
+
+        public async Task<IEnumerable<PostResponse>> GetAllSubmittedPostsAsync(PostType? typeFilter)
         {
-            var posts = await _unitOfWork.PostRepository.GetAll()
-                .Where(p => p.CreatedBy == userId)
+            // Build query 
+            var query = _unitOfWork.PostRepository
+                .GetAll()
                 .Include(p => p.Creator)
                 .Include(p => p.Assignee)
-                .ToListAsync();
-
-            return posts.Select(MapToResponse);
-        }
-
-        public async Task<IEnumerable<PostResponse>> GetAllSubmittedPostsAsync()
-        {
-            var posts = await _unitOfWork.PostRepository.GetAll()
                 .Where(p => p.Status == PostStatus.PENDING_APPROVAL)
-                .Include(p => p.Creator)
-                .Include(p => p.Assignee)
-                .ToListAsync();
+                .AsQueryable();
 
+            // Apply optional filter
+            if (typeFilter.HasValue)
+            {
+                query = query.Where(p => p.PostType == typeFilter.Value);
+            }
+
+            // Execute query
+            var posts = await query.ToListAsync();
+
+            // Map to DTO
             return posts.Select(MapToResponse);
         }
-        public async Task<IEnumerable<PostResponse>> GetSubmittedPostsByUserAsync(int userId)
+
+        public async Task<IEnumerable<PostResponse>> GetSubmittedPostsByUserAsync(int userId, PostType? typeFilter)
         {
-            var posts = await _unitOfWork.PostRepository.GetAll()
-                .Where(p => p.Status == PostStatus.PENDING_APPROVAL && p.CreatedBy == userId)
+            // Build query first
+            var query = _unitOfWork.PostRepository
+                .GetAll()
                 .Include(p => p.Creator)
                 .Include(p => p.Assignee)
-                .ToListAsync();
+                .Where(p => p.Status == PostStatus.PENDING_APPROVAL && p.CreatedBy == userId)
+                .AsQueryable();
 
+            // Apply optional filter
+            if (typeFilter.HasValue)
+            {
+                query = query.Where(p => p.PostType == typeFilter.Value);
+            }
+
+            // Execute query
+            var posts = await query.ToListAsync();
+
+            // Map to DTO
             return posts.Select(MapToResponse);
         }
+
 
         private PostResponse MapToResponse(Post post) => new PostResponse
         {
             Id = post.Id,
             Title = post.Title,
             Description = post.Description,
+            PostType =post.PostType.ToString(),
             Status = post.Status.ToString(),
             CreatorId = post.CreatedBy,
             Creator = post.Creator.UserName,

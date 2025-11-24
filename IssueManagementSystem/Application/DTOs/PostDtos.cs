@@ -1,9 +1,12 @@
-﻿namespace IssueManagementSystem.Application.DTOs
+﻿using IssueManagementSystem.Domain.Enums;
+
+namespace IssueManagementSystem.Application.DTOs
 {
     public class PostDtos
     {
         public class CreatePostRequest
         {
+            public PostType PostType { get; set; }
             public string Title { get; set; } = null!;
             public string Description { get; set; } = null!;
         }
@@ -25,6 +28,8 @@
             public int Id { get; set; }
             public string Title { get; set; } = null!;
             public string Description { get; set; } = null!;
+            public string PostType { get; set; } = null!;
+            public string PostStatus { get; set; } = null!;
             public string Status { get; set; } = null!;
             public int CreatorId { get; set; }
             public string Creator { get; set; } = null!;

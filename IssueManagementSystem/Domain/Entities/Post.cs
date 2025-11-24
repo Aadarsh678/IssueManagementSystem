@@ -10,6 +10,7 @@ namespace IssueManagementSystem.Domain.Entities
         public string Description { get; set; } = null!;
         public int CreatedBy { get; set; } // FK to User
         public int? AssignedTo { get; set; } // Nullable FK
+        public PostType PostType { get; set; }
         public PostStatus Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

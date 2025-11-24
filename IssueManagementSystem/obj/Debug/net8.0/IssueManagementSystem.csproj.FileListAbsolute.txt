@@ -135,4 +135,5 @@ C:\Users\Adarsh\source\repos\IssueManagementSystem\IssueManagementSystem\obj\Deb
 C:\Users\Adarsh\source\repos\IssueManagementSystem\IssueManagementSystem\obj\Debug\net8.0\ref\IssueManagementSystem.dll
 C:\Users\Adarsh\source\repos\IssueManagementSystem\IssueManagementSystem\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\Adarsh\source\repos\IssueManagementSystem\IssueManagementSystem\bin\Debug\net8.0\appsettings.json
+C:\Users\Adarsh\source\repos\IssueManagementSystem\IssueManagementSystem\obj\Debug\net8.0\IssueManagementSystem.sourcelink.json
 C:\Users\Adarsh\source\repos\IssueManagementSystem\IssueManagementSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

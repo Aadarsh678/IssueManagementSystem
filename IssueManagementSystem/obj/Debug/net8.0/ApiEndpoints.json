@@ -2,7 +2,7 @@
   {
     "ContainingType": "IssueManagementSystem.API.Controllers.AdminController",
     "Method": "Approve",
-    "RelativePath": "api/Admin/approve",
+    "RelativePath": "api/Admin/post/approve",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -17,24 +17,8 @@
   },
   {
     "ContainingType": "IssueManagementSystem.API.Controllers.AdminController",
-    "Method": "Promote",
-    "RelativePath": "api/Admin/promote",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "IssueManagementSystem.API.Controllers.Promote",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "IssueManagementSystem.API.Controllers.AdminController",
     "Method": "Reject",
-    "RelativePath": "api/Admin/reject",
+    "RelativePath": "api/Admin/post/reject",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -50,17 +34,23 @@
   {
     "ContainingType": "IssueManagementSystem.API.Controllers.AdminController",
     "Method": "GetAllSubmittedPosts",
-    "RelativePath": "api/Admin/submitted/all",
+    "RelativePath": "api/Admin/post/submitted/all",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "postType",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
     "ContainingType": "IssueManagementSystem.API.Controllers.AdminController",
     "Method": "GetSubmittedPostsByUser",
-    "RelativePath": "api/Admin/submitted/user/{userId}",
+    "RelativePath": "api/Admin/post/submitted/user/{userId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -68,6 +58,27 @@
       {
         "Name": "userId",
         "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "postType",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "IssueManagementSystem.API.Controllers.AdminController",
+    "Method": "Promote",
+    "RelativePath": "api/Admin/user/promote",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "IssueManagementSystem.API.Controllers.Promote",
         "IsRequired": true
       }
     ],
@@ -187,12 +198,34 @@
   },
   {
     "ContainingType": "PostController",
+    "Method": "GetById",
+    "RelativePath": "api/Post/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PostController",
     "Method": "GetAllApproved",
     "RelativePath": "api/Post/approved",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "postType",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -234,7 +267,18 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "postType",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "postStatus",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   }
 ]
